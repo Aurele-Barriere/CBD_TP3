@@ -1,0 +1,206 @@
+\documentclass{article}
+
+\author{Aurèle Barrière \& Benjamin Fasquelle}
+
+\begin{document}
+
+
+
+
+
+
+
+
+\end{document}
+
+2.1 
+dans le noeud (parapluie-21), pour hanoi avec n=15
+real	0m0.305s
+user	0m0.008s
+sys	0m0.132s
+
+n= 17
+real	0m0.991s
+user	0m0.072s
+sys	0m0.408s
+
+n=18
+real	0m1.982s
+user	0m0.144s
+sys	0m0.840s
+
+
+
+sur la première debian (déployée) : -> on s'en fout
+n=15
+real	0m0.914s
+user	0m0.036s
+sys	0m0.196s
+
+n=17
+real	0m1.520s
+user	0m0.132s
+sys	0m0.640s
+
+n=18
+real	0m3.292s
+user	0m0.248s
+sys	0m1.464s
+
+
+sur la machine virtuelle (virsh) :
+n=15
+real	0m10.286s
+user	0m0.116s
+sys	0m10.169s
+
+n=17
+real	0m41.431s
+user	0m0.452s
+sys	0m40.975s
+
+
+n=18
+real	1m22.350s
+user	0m0.820s
+sys	1m21.521s
+
+
+2.2
+hanoi 25, sans les forcer sur un processeur
+real	0m14.416s
+user	0m11.733s
+sys	0m1.508s
+
+real	0m14.724s
+user	0m11.989s
+sys	0m1.532s
+
+hanoi 25, en les forçant sur un même processeur (virsh vcpupin wheezy0 0 0)
+real	0m24.501s
+user	0m22.573s
+sys	0m1.360s
+
+real	0m24.316s
+user	0m22.009s
+sys	0m1.580s
+
+
+3.1
+deux machines virtuelles sur le meme serveur :
+64 bytes from 10.158.3.253: icmp_req=1 ttl=63 time=0.378 ms
+64 bytes from 10.158.3.253: icmp_req=2 ttl=63 time=0.280 ms
+64 bytes from 10.158.3.253: icmp_req=3 ttl=63 time=0.300 ms
+64 bytes from 10.158.3.253: icmp_req=4 ttl=63 time=0.246 ms
+64 bytes from 10.158.3.253: icmp_req=5 ttl=63 time=0.288 ms
+64 bytes from 10.158.3.253: icmp_req=6 ttl=63 time=0.280 ms
+64 bytes from 10.158.3.253: icmp_req=7 ttl=63 time=0.235 ms
+--- 10.158.3.253 ping statistics ---
+7 packets transmitted, 7 received, 0% packet loss, time 5997ms
+rtt min/avg/max/mdev = 0.235/0.286/0.378/0.047 ms
+
+deux machines virtuelles sur des serveurs différents
+PING 10.158.3.253 (10.158.3.253) 56(84) bytes of data.
+64 bytes from 10.158.3.253: icmp_req=1 ttl=64 time=0.819 ms
+64 bytes from 10.158.3.253: icmp_req=2 ttl=64 time=0.386 ms
+64 bytes from 10.158.3.253: icmp_req=3 ttl=64 time=0.430 ms
+64 bytes from 10.158.3.253: icmp_req=4 ttl=64 time=0.407 ms
+64 bytes from 10.158.3.253: icmp_req=5 ttl=64 time=0.384 ms
+64 bytes from 10.158.3.253: icmp_req=6 ttl=64 time=0.354 ms
+64 bytes from 10.158.3.253: icmp_req=7 ttl=64 time=0.374 ms
+64 bytes from 10.158.3.253: icmp_req=8 ttl=64 time=0.405 ms
+^C
+--- 10.158.3.253 ping statistics ---
+8 packets transmitted, 8 received, 0% packet loss, time 7011ms
+rtt min/avg/max/mdev = 0.354/0.444/0.819/0.145 ms
+
+entre les deux parapluies
+PING parapluie-21.rennes.grid5000.fr (172.16.99.21) 56(84) bytes of data.
+64 bytes from parapluie-21.rennes.grid5000.fr (172.16.99.21): icmp_req=1 ttl=64 time=0.190 ms
+64 bytes from parapluie-21.rennes.grid5000.fr (172.16.99.21): icmp_req=2 ttl=64 time=0.088 ms
+64 bytes from parapluie-21.rennes.grid5000.fr (172.16.99.21): icmp_req=3 ttl=64 time=0.093 ms
+64 bytes from parapluie-21.rennes.grid5000.fr (172.16.99.21): icmp_req=4 ttl=64 time=0.094 ms
+64 bytes from parapluie-21.rennes.grid5000.fr (172.16.99.21): icmp_req=5 ttl=64 time=0.090 ms
+64 bytes from parapluie-21.rennes.grid5000.fr (172.16.99.21): icmp_req=6 ttl=64 time=0.093 ms
+64 bytes from parapluie-21.rennes.grid5000.fr (172.16.99.21): icmp_req=7 ttl=64 time=0.090 ms
+64 bytes from parapluie-21.rennes.grid5000.fr (172.16.99.21): icmp_req=8 ttl=64 time=0.090 ms
+^C
+--- parapluie-21.rennes.grid5000.fr ping statistics ---
+8 packets transmitted, 8 received, 0% packet loss, time 6998ms
+rtt min/avg/max/mdev = 0.088/0.103/0.190/0.034 ms
+
+
+depuis l'os hote(parapluie) a une VM du meme serveur
+PING 10.158.3.253 (10.158.3.253) 56(84) bytes of data.
+64 bytes from 10.158.3.253: icmp_req=1 ttl=63 time=0.419 ms
+64 bytes from 10.158.3.253: icmp_req=2 ttl=63 time=0.304 ms
+64 bytes from 10.158.3.253: icmp_req=3 ttl=63 time=0.289 ms
+64 bytes from 10.158.3.253: icmp_req=4 ttl=63 time=0.247 ms
+64 bytes from 10.158.3.253: icmp_req=5 ttl=63 time=0.296 ms
+64 bytes from 10.158.3.253: icmp_req=6 ttl=63 time=0.284 ms
+64 bytes from 10.158.3.253: icmp_req=7 ttl=63 time=0.240 ms
+64 bytes from 10.158.3.253: icmp_req=8 ttl=63 time=0.289 ms
+^C
+--- 10.158.3.253 ping statistics ---
+8 packets transmitted, 8 received, 0% packet loss, time 6999ms
+rtt min/avg/max/mdev = 0.240/0.296/0.419/0.051 ms
+
+
+3.2
+iperf entre deux vms sur le meme serveur
+iperf -s
+iperf -c (adresse du serveur)
+root@virtual-158-3-253:~# iperf -c 10.158.3.254
+------------------------------------------------------------
+Client connecting to 10.158.3.254, TCP port 5001
+TCP window size: 23.5 KByte (default)
+------------------------------------------------------------
+[  3] local 10.158.3.253 port 58930 connected with 10.158.3.254 port 5001
+[ ID] Interval       Transfer     Bandwidth
+[  3]  0.0-10.0 sec  2.76 GBytes  2.37 Gbits/sec
+
+iperf entre deux vms sur des serveurs différents
+root@virtual-158-3-253:~# iperf -c 10.158.3.252
+------------------------------------------------------------
+Client connecting to 10.158.3.252, TCP port 5001
+TCP window size: 23.5 KByte (default)
+------------------------------------------------------------
+[  3] local 10.158.3.253 port 47499 connected with 10.158.3.252 port 5001
+[ ID] Interval       Transfer     Bandwidth
+[  3]  0.0-10.0 sec  1.10 GBytes   941 Mbits/sec
+
+
+
+4.1
+time virsh migrate wheezy1 qemu+ssh://parapluie-32/system
+
+
+real	0m5.840s
+user	0m0.040s
+sys	0m0.008s
+
+
+4.2
+time $(virsh migrate wheezy1 qemu+ssh://parapluie-32/system & virsh migrate wheezy3 qemu+ssh://parapluie-32/system)
+
+real	0m7.850s
+user	0m0.060s
+sys	0m0.040s
+
+$
+envoi des deux vm depuis des serveurs sources différents
+time $(virsh migrate wheezy3 qemu+ssh://parapluie-21/system)
+
+real	0m2.820s
+user	0m0.036s
+sys	0m0.016s
+
+
+time $(virsh migrate wheezy1 qemu+ssh://parapluie-32/system)
+
+real	0m6.061s
+user	0m0.048s
+sys	0m0.008s
+
+
+4.4
