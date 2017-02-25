@@ -31,6 +31,60 @@ Debian hôte & 0.132 & 0.408 & 0.840\\\hline
 
 Il y a donc une différence de performance significative. Pour ces arguments, la machine virtuelle est entre 77 et 216 fois plus lente que sa machine hôte.
 
+\paragraph{Question 2.2.} 
+Il faut refaire les mesures.
+
+\paragraph{Question 2.3.}
+On utilise la commande \code{virsh vcpupin wheezy0 0 0} pour mettre les deux machines virtuelles sur le même CPU.
+
+
+Il faut refaire les mesures.
+
+\section{Performances réseau}
+\paragraph{Question 3.1.}
+On note les résultats de ma commande \code{ping}. Dans tous les cas testés, il n'y a eu aucune perte de paquets. On ne notera donc que la dernière ligne de \code{ping}.
+
+Entre deux VMs hébergées sur le même serveur:
+
+\code{rtt min/avg/max/mdev = 0.235/0.286/0.378/0.047 ms}
+
+Entre deux VMs hébergées sur des serveur différents:
+
+\code{rtt min/avg/max/mdev = 0.354/0.444/0.819/0.145 ms}
+
+Entre deux serveurs différents:
+
+\code{rtt min/avg/max/mdev = 0.088/0.103/0.190/0.034 ms}
+
+Entre un OS hôte et une VM sur le même serveur:
+
+\code{rtt min/avg/max/mdev = 0.240/0.296/0.419/0.051 ms}
+
+
+On remarque que la communication entre serveurs est la plus rapide. On peut en déduire que les machines virtuelles ralentissent les communications. A REVOIR
+
+JE NE SUIS PAS SUR DE COMMENT TOUT EXPLIQUER
+
+\paragraph{Question 3.2.}
+On donne les résultats de la commande \code{iperf}.
+
+Pour des machines hébergées sur le même serveur:
+
+\code{[  3]  0.0-10.0 sec  2.76 GBytes  2.37 Gbits/sec}
+
+Pour des machines hébergées sur des serveurs différents:
+
+\code{[  3]  0.0-10.0 sec  1.10 GBytes   941 Mbits/sec}
+
+Il y a donc une différence significative de bande passante (avec un facteur d'environ 2.5). Sans surpise, des machines hébergées sur le même serveur on une bande passante bien supérieure à deux machines hébergées sur des serveurs différents.
+
+ON N A PAS SATURE LE RESEAU
+
+\section{Migrons}
+\paragraph{Question 4.1.}
+
+
+
 
 
 \end{document}
