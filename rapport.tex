@@ -1,13 +1,35 @@
-\documentclass{article}
+\documentclass[12pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[french]{babel}
+\usepackage{amsmath,amsfonts,amssymb}
+\usepackage{fullpage}
+\usepackage{graphicx}
+\usepackage{hyperref}
 
+\title{Virtualisation de performances}
 \author{Aurèle Barrière \& Benjamin Fasquelle}
 
 \begin{document}
+\maketitle
+\def\code#1{\texttt{#1}}
 
+\section{Préambule}
+Après avoir mis une adresse IP valide, il est bien possible de se connecter à la machine virtuelle avec \code{virsh console wheezy0} et installer \code{htop} (avec \code{apt-get} par exemple).
 
+\section{Performances CPU}
 
+\paragraph{Question 2.1.} Nous avons lancé le programme \texttt{hanoi} avec 15,17 et 18 comme arguments sur la machine virtuelle (créée avec \code{virsh}) et sur la Debian hôte. Nous sommes ainsi garantis que le programme tourne bien sur le même matériel physique.
 
+Le temps d'exécution, en secondes est le suivant:
 
+\begin{tabular}{| l | c | c | c |}\hline
+Machine & $N=15$ & $N=17$ & $N=18$ \\\hline
+Machine virtuelle & 10.169 & 40.975 & 181.521 \\\hline
+Debian hôte & 0.132 & 0.408 & 0.840\\\hline
+\end{tabular}
+
+Il y a donc une différence de performance significative. Pour ces arguments, la machine virtuelle est entre 77 et 216 fois plus lente que sa machine hôte.
 
 
 
@@ -28,24 +50,6 @@ n=18
 real	0m1.982s
 user	0m0.144s
 sys	0m0.840s
-
-
-
-sur la première debian (déployée) : -> on s'en fout
-n=15
-real	0m0.914s
-user	0m0.036s
-sys	0m0.196s
-
-n=17
-real	0m1.520s
-user	0m0.132s
-sys	0m0.640s
-
-n=18
-real	0m3.292s
-user	0m0.248s
-sys	0m1.464s
 
 
 sur la machine virtuelle (virsh) :
