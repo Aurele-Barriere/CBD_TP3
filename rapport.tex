@@ -29,10 +29,13 @@ Machine virtuelle & 10.169 & 40.975 & 181.521 \\\hline
 Debian hôte & 0.132 & 0.408 & 0.840\\\hline
 \end{tabular}
 
-Il y a donc une différence de performance significative. Pour ces arguments, la machine virtuelle est entre 77 et 216 fois plus lente que sa machine hôte.
+Il y a donc une différence de performance significative. Pour ces arguments, la machine virtuelle est entre 77 et 216 fois plus lente que sa machine hôte. Cela provient de la couche de virtualisation.
 
 \paragraph{Question 2.2.} 
 Il faut refaire les mesures.
+
+Le temps d'exécution est du même ordre que précedemment. En utilisant \code{htop}, nous avons observer l'allocation des ressources CPU aux deux machines virtuelles exécutant \texttt{hanoi}. Nous avons pu voir que le CPU associé à l'une des machines virtuelles est dynamique: il était différent à chaque exécution, et changeait même pendant l'exécution. De ce fait, les exécutions parallèles d'\texttt{hanoi} ne s'exécutaient pas sur le même CPU, ce qui explique que le temps d'exécution (en parallèle) n'a pas augmenté par rapport à une exécution simple.
+
 
 \paragraph{Question 2.3.}
 On utilise la commande \code{virsh vcpupin wheezy0 0 0} pour mettre les deux machines virtuelles sur le même CPU.
@@ -40,51 +43,101 @@ On utilise la commande \code{virsh vcpupin wheezy0 0 0} pour mettre les deux mac
 
 Il faut refaire les mesures.
 
+\begin{tabular}{| l | c |}\hline
+Utilisation des CPU & $N=25$ \\\hline
+Sans forcer le CPU & 1.532 \\\hline
+En forçant le CPU & 1.580 \\\hline
+\end{tabular}
+
+ATTENTION: MESURES PAS LOGIQUES, TROP FAIBLES
+
+
+Cette fois, les deux programmes s'exécutant sur le même CPU, le temps d'exécution est augmenté: il est environ le double que pour une exécution simple.
+
 \section{Performances réseau}
 \paragraph{Question 3.1.}
-On note les résultats de ma commande \code{ping}. Dans tous les cas testés, il n'y a eu aucune perte de paquets. On ne notera donc que la dernière ligne de \code{ping}.
+On note les résultats de la commande \code{ping}. Dans tous les cas testés, il n'y a eu aucune perte de paquets. On ne notera donc que la dernière ligne de \code{ping}.
+\\
 
 Entre deux VMs hébergées sur le même serveur:
 
 \code{rtt min/avg/max/mdev = 0.235/0.286/0.378/0.047 ms}
+\\
 
 Entre deux VMs hébergées sur des serveur différents:
 
 \code{rtt min/avg/max/mdev = 0.354/0.444/0.819/0.145 ms}
+\\
 
 Entre deux serveurs différents:
 
 \code{rtt min/avg/max/mdev = 0.088/0.103/0.190/0.034 ms}
+\\
 
 Entre un OS hôte et une VM sur le même serveur:
 
 \code{rtt min/avg/max/mdev = 0.240/0.296/0.419/0.051 ms}
+\\
+
+On remarque que la communication entre serveurs est la plus rapide, tandis que celles avec les machines virtuelles sont les plus lentes. On peut en déduire que les machines virtuelles ralentissent les communications.
+
+On peut également observer que les discussions entre les deux machines virtuelles sont plus rapides lorqu'elles sont hébergées sur le même serveur, on peut donc en déduire qu'il y a une communication interne au serveur, plus rapide que celle entre serveurs.
 
 
-On remarque que la communication entre serveurs est la plus rapide. On peut en déduire que les machines virtuelles ralentissent les communications. A REVOIR
+
+A REVOIR
 
 JE NE SUIS PAS SUR DE COMMENT TOUT EXPLIQUER
 
 \paragraph{Question 3.2.}
 On donne les résultats de la commande \code{iperf}.
+\\
 
 Pour des machines hébergées sur le même serveur:
 
 \code{[  3]  0.0-10.0 sec  2.76 GBytes  2.37 Gbits/sec}
+\\
 
 Pour des machines hébergées sur des serveurs différents:
 
 \code{[  3]  0.0-10.0 sec  1.10 GBytes   941 Mbits/sec}
+\\
 
-Il y a donc une différence significative de bande passante (avec un facteur d'environ 2.5). Sans surpise, des machines hébergées sur le même serveur on une bande passante bien supérieure à deux machines hébergées sur des serveurs différents.
+Il y a donc une différence significative de bande passante (avec un facteur d'environ 2.5). Sans surpise, des machines hébergées sur le même serveur ont une bande passante bien supérieure à deux machines hébergées sur des serveurs différents.
 
 ON N A PAS SATURE LE RESEAU
+
+En émettant du trafic avec toutes les machines virtuelles, on parvient facilement à saturer le réseau.
 
 \section{Migrons}
 \paragraph{Question 4.1.}
 
+Avec la commande \code{virsh migrate}, nous avons migrer une machine virtuelle d'un serveur à un autre. Cette opération est rapide (temps réel: 5 secondes, temps système: 8ms).
+
+\paragraph{Question 4.2.}
+
+On peut migrer deux machines virtuelles en parrallèle d'un même serveur source vers un même serveur destination. Comme attendu, l'opération est plus longue que lorsqu'on migre une seule machine virtuelle (temps réel: 8secondes, temps système: 40ms).
 
 
+On peut également migrer en parallèle deux machines virtuelles depuis des serveurs sources différents. Ici, l'opération est environ deux fois plus longue que lorsqu'on migre une seule machine virtuelle (temps réel: 3secondes, temps système: 16ms).
+
+
+
+\paragraph{Question 4.3.}
+
+On peut migrer en parallèle une machine virtuelle d'un serveur A vers un serveur B, et une autre du serveur B vers le serveur A. Comme attendu, le temps de migration est deux fois plus élevé que pour une simple migration.
+
+\paragraph{Question 4.4.}
+
+Le temps de migration est plus long?
+
+\paragraph{Question 4.5.}
+
+La durée de migration est similaire?
+
+\paragraph{Question 4.6.}
+
+A FAIRE
 
 
 \end{document}
