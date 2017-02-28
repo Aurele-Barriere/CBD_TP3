@@ -34,7 +34,27 @@ Il y a donc une différence de performance significative. Pour ces arguments, la
 \paragraph{Question 2.2.} 
 Il faut refaire les mesures.
 
-Le temps d'exécution est du même ordre que précedemment. En utilisant \code{htop}, nous avons observer l'allocation des ressources CPU aux deux machines virtuelles exécutant \texttt{hanoi}. Nous avons pu voir que le CPU associé à l'une des machines virtuelles est dynamique: il était différent à chaque exécution, et changeait même pendant l'exécution. De ce fait, les exécutions parallèles d'\texttt{hanoi} ne s'exécutaient pas sur le même CPU, ce qui explique que le temps d'exécution (en parallèle) n'a pas augmenté par rapport à une exécution simple.
+
+----- NOTES
+
+Je refais sur une machine puis sur 2, mais sur d'autres nodes qu'avant. il faut donc préciser qu'il ne faut pas comparer avec la question précédente.
+
+hanoi(20)
+
+sur une seule VM: 2min45
+
+sur deux VM du meme serveur, sans rien forcer: 2m50 et 2m51
+
+
+
+
+
+-----
+
+
+
+
+Le temps d'exécution est du même ordre qu'avec une seule machine virtuelle. En utilisant \code{htop}, nous avons observer l'allocation des ressources CPU aux deux machines virtuelles exécutant \texttt{hanoi}. Nous avons pu voir que le CPU associé à l'une des machines virtuelles est dynamique: il était différent à chaque exécution, et changeait même pendant l'exécution. De ce fait, les exécutions parallèles d'\texttt{hanoi} ne s'exécutaient pas sur le même CPU, ce qui explique que le temps d'exécution (en parallèle) n'a pas presque pas augmenté par rapport à une exécution simple.
 
 
 \paragraph{Question 2.3.}
