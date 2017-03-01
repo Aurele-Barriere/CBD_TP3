@@ -145,6 +145,9 @@ En émettant du trafic avec toutes les machines virtuelles, on parvient facileme
 \section{Migrons}
 \paragraph{Question 4.1.}
 
+
+JE PENSE QUE LE TEMPS SYSTEM N'EST PAS PERTINENT ICI
+
 Avec la commande \code{virsh migrate}, nous avons migrer une machine virtuelle d'un serveur à un autre. Cette opération est rapide (temps réel: 5 secondes, temps système: 8ms).
 
 \paragraph{Question 4.2.}
@@ -164,6 +167,10 @@ On peut migrer en parallèle une machine virtuelle d'un serveur A vers un serveu
 
 Le temps de migration est plus long?
 
+
+NOTES
+Pour l'instant, ca ne change pas le temps (c'est meme plus court). D'un côté, on a une grosse bande passante (environ 1G/s), donc on peut dire que c'est pas le transfert de données qui prend du temps. je referais des essais en augmentant encore la taille ddu fichier
+
 \paragraph{Question 4.5.}
 
 La durée de migration est similaire?
@@ -171,6 +178,11 @@ La durée de migration est similaire?
 \paragraph{Question 4.6.}
 
 A FAIRE
+Idée proposée: d'abord exécuter un programme en notant son temps d'execution, puis le refaire mais avec une migration au milieu.
+
+/usr/bin/time -o result ./hanoi 20
+
+Pour l'instant, je mesure une différence d'environ 1-2 secondes. je referais des mesures
 
 
 \end{document}
