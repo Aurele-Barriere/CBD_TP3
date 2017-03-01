@@ -14,6 +14,8 @@
 \maketitle
 \def\code#1{\texttt{#1}}
 
+\paragraph{Remarque} Lorsque ce n'est pas précisé dans notre réponse, il ne faut pas comparer les résultats d'une question avec ceux d'une autre question. En effet, les mesures ont été faites lors de différentes réservations sur des machines différentes.
+
 \section{Préambule}
 Après avoir mis une adresse IP valide, il est bien possible de se connecter à la machine virtuelle avec \code{virsh console wheezy0} et installer \code{htop} (avec \code{apt-get} par exemple).
 
@@ -32,60 +34,34 @@ Debian hôte & 0.132 & 0.408 & 0.840\\\hline
 Il y a donc une différence de performance significative. Pour ces arguments, la machine virtuelle est entre 77 et 216 fois plus lente que sa machine hôte. Cela provient de la couche de virtualisation.
 
 \paragraph{Question 2.2.} 
-Il faut refaire les mesures.
+Cette fois-ci, nous comparons l'exécution sur deux machines virtuelles sur le même serveur à l'exécution sur une unique machine virtuelle. Les machines utilisées ont une configuration identique.
+
+Nous lançons le programme \code{hanoi} avec \code{N=20}. Sur une seule machine virtuelle, le programme termine en 2 minutes 45 secondes.
+
+Sur deux machines virtuelles, les programmes terminent en 2 minutes 50 et 2 minutes 51.
 
 
------ NOTES
+Le temps d'exécution est donc du même ordre qu'avec une seule machine virtuelle. En utilisant \code{htop}, nous avons pu observer l'allocation des ressources CPU aux deux machines virtuelles exécutant \texttt{hanoi}. Nous avons pu voir que le CPU associé à l'une des machines virtuelles est dynamique: il était différent à chaque exécution, et changeait même pendant l'exécution. De ce fait, les exécutions parallèles d'\texttt{hanoi} ne s'exécutaient pas sur le même CPU, ce qui explique que le temps d'exécution (en parallèle) n'a pas presque pas augmenté par rapport à une exécution simple.
 
-Je refais sur une machine puis sur 2, mais sur d'autres nodes qu'avant. il faut donc préciser qu'il ne faut pas comparer avec la question précédente.
-
-hanoi(20)
-
-sur une seule VM: 2min45
-
-sur deux VM du meme serveur, sans rien forcer: 2m50 et 2m51
-
-
-
-
-
------
-
-
-
-
-Le temps d'exécution est du même ordre qu'avec une seule machine virtuelle. En utilisant \code{htop}, nous avons observer l'allocation des ressources CPU aux deux machines virtuelles exécutant \texttt{hanoi}. Nous avons pu voir que le CPU associé à l'une des machines virtuelles est dynamique: il était différent à chaque exécution, et changeait même pendant l'exécution. De ce fait, les exécutions parallèles d'\texttt{hanoi} ne s'exécutaient pas sur le même CPU, ce qui explique que le temps d'exécution (en parallèle) n'a pas presque pas augmenté par rapport à une exécution simple.
+Nous avons effectué d'autres mesures sur des serveurs différents, et la différence n'a jamais dépassé 4\%.
 
 
 \paragraph{Question 2.3.}
 On utilise la commande \code{virsh vcpupin wheezy0 0 0} pour mettre les deux machines virtuelles sur le même CPU.
 
-
-Il faut refaire les mesures.
-
 \begin{tabular}{| l | c |}\hline
-Utilisation des CPU & $N=25$ \\\hline
-Sans forcer le CPU & 1.532 \\\hline
+Utilisation des CPU & $N=20$ \\\hline
+Sans forcer le CPU &  \\\hline
 En forçant le CPU & 1.580 \\\hline
 \end{tabular}
 
-ATTENTION: MESURES PAS LOGIQUES, TROP FAIBLES
 
------NOTES
+Cette fois-ci, les temps d'exécution sont bien supérieurs: 7 minutes 30 et 7 minutes 31 sur deux machines contre 3 minutes 10 sur une seule machine. Le temps d'exécution est donc plus de deux fois supérieur.
 
-Bon la c'est bizarre. j'ai utilisée la meme commande que ce qu'on a marqué.
+Avec \code{htop}, on constate que 4 c\oe urs sont utilisés presque au maximum. Cette fois-ci, les CPUs utilisés ne changent pas au cours de l'exécution. Cela explique le temps doublé.
 
-C'est bien plus lent : 7m30 et 7m31.
+Nous avons essayé sur d'autres serveurs, et le temps a toujours été quelques secondes au dessus du double d'une exécution simple.
 
-Mais avec htop, je voyais 4 barres actives (pas 1). Alors c'est mieux qu'avant, c'etait toujours les 4 memes (alors qu'avant ca se baladait sur les 40) mais ca devrait pas dépasser comme ça.
-
-Sinon, le résultat reste concluant
-
-
------
-
-
-Cette fois, les deux programmes s'exécutant sur le même CPU, le temps d'exécution est augmenté: il est environ le double que pour une exécution simple. A CHANGER
 
 \section{Performances réseau}
 \paragraph{Question 3.1.}
@@ -116,11 +92,7 @@ On remarque que la communication entre serveurs est la plus rapide, tandis que c
 
 On peut également observer que les discussions entre les deux machines virtuelles sont plus rapides lorqu'elles sont hébergées sur le même serveur, on peut donc en déduire qu'il y a une communication interne au serveur, plus rapide que celle entre serveurs.
 
-
-
-A REVOIR
-
-JE NE SUIS PAS SUR DE COMMENT TOUT EXPLIQUER
+Cependant, ces mesures n'ont été faites qu'entre deux serveurs particuliers. Il faudrait faire plus de mesures sur des serveurs différents pour être plus convaincu par ces déductions. 
 
 \paragraph{Question 3.2.}
 On donne les résultats de la commande \code{iperf}.
@@ -146,217 +118,55 @@ En émettant du trafic avec toutes les machines virtuelles, on parvient facileme
 \paragraph{Question 4.1.}
 
 
-JE PENSE QUE LE TEMPS SYSTEM N'EST PAS PERTINENT ICI
+Avec la commande \code{virsh migrate}, nous avons migré une machine virtuelle d'un serveur à un autre. Cette opération est rapide (entre 2 et 5 secondes selon les serveurs utilisés).
 
-Avec la commande \code{virsh migrate}, nous avons migrer une machine virtuelle d'un serveur à un autre. Cette opération est rapide (temps réel: 5 secondes, temps système: 8ms).
+On utilise la commande \code{virsh migrate wheezy0 qemu+ssh://nodename/system}.
 
 \paragraph{Question 4.2.}
 
-On peut migrer deux machines virtuelles en parrallèle d'un même serveur source vers un même serveur destination. Comme attendu, l'opération est plus longue que lorsqu'on migre une seule machine virtuelle (temps réel: 8secondes, temps système: 40ms).
+On peut migrer deux machines virtuelles en parrallèle d'un même serveur source vers un même serveur destination. Comme attendu, l'opération est plus longue que lorsqu'on migre une seule machine virtuelle (par exemple, 7.850 secondes pour le serveur qui ne mettait que 5.840 secondes à faire une migration simple).
 
 
-On peut également migrer en parallèle deux machines virtuelles depuis des serveurs sources différents. Ici, l'opération est environ deux fois plus longue que lorsqu'on migre une seule machine virtuelle (temps réel: 3secondes, temps système: 16ms).
+On peut également migrer en parallèle deux machines virtuelles depuis des serveurs sources différents. Ici, l'opération est environ aussi rapide que pour une migration simple (6.061 secondes pour le serveur qui en mettait 5.840 à faire une migration simple).
 
 
 
 \paragraph{Question 4.3.}
 
-On peut migrer en parallèle une machine virtuelle d'un serveur A vers un serveur B, et une autre du serveur B vers le serveur A. Comme attendu, le temps de migration est deux fois plus élevé que pour une simple migration.
+On peut migrer en parallèle une machine virtuelle d'un serveur A vers un serveur B, et une autre du serveur B vers le serveur A. Comme attendu, le temps de migration est environ égal au temps maximal que met un des serveurs à migrer sa machine. 
 
 \paragraph{Question 4.4.}
 
-Le temps de migration est plus long?
+On crée un fichier d'une taille fixe avec la commande \code{dd if=/dev/zero of=file bs=1G count=1}. Nous avons pu constater une forte augmentation du temps de migration (de 2.262 secondes à 6.795 secondes). 
 
-
-NOTES
-Pour l'instant, ca ne change pas le temps (c'est meme plus court). D'un côté, on a une grosse bande passante (environ 1G/s), donc on peut dire que c'est pas le transfert de données qui prend du temps. je referais des essais en augmentant encore la taille ddu fichier
 
 \paragraph{Question 4.5.}
 
-La durée de migration est similaire?
+\def\vcpu{\textit{v}CPU}
+
+Le temps de migration semble dépendre de ces deux paramètres.
+
+Commençons par changer le nombre de \vcpu s. Sur un serveur qui fait une migration en 2.262 secondes pour 1 \vcpu, on obtient 2.31 secondes pour 3 \vcpu s (soit une augmentation de 0.15 secondes) et 3.37 secondes pour 15 \vcpu s (soit une augmentation de 1.1 secondes).
+
+Ensuite, on fait varier la taille de la mémoire.
+Pour une taile de $2^{19}$ bits, on a le même temps de 2.262 secondes.
+Pour $2^{22}$ bits, on a 4.938 secondes.
+Pour $2^{11}$ bits, on a 1.188 secondes.
+
+Le temps de migration semble donc augmenter avec la taille de la mémoire et le nombre de \vcpu s.
+
 
 \paragraph{Question 4.6.}
 
-A FAIRE
-Idée proposée: d'abord exécuter un programme en notant son temps d'execution, puis le refaire mais avec une migration au milieu.
+Nous proposons d'effectuer un calcul sur une machine virtuelle en notant son temps d'exécution, puis de refaire le même calcul avec une migration pendant son exécution. La différence des temps d'exécution devrait nous donner le temps d'interruption.
 
-/usr/bin/time -o result ./hanoi 20
+On utilise l'option \code{--live} de \code{virsh migrate}.
 
-Pour l'instant, je mesure une différence d'environ 1-2 secondes. je referais des mesures
+Une premier test sur deux serveurs nous donnent une temps de migration de 1.33 secondes (5.74 et 7.07 secondes).
+
+Un deuxième test sur des serveurs différents avec un programme plus long nous donne 1.31 seondes (178.28 et 179.29) secondes.
+
+Comme attendu, ce temps de migration semble donc constant quel que soit le temps d'exécution du programme.
 
 
 \end{document}
-
-2.1 
-dans le noeud (parapluie-21), pour hanoi avec n=15
-real	0m0.305s
-user	0m0.008s
-sys	0m0.132s
-
-n= 17
-real	0m0.991s
-user	0m0.072s
-sys	0m0.408s
-
-n=18
-real	0m1.982s
-user	0m0.144s
-sys	0m0.840s
-
-
-sur la machine virtuelle (virsh) :
-n=15
-real	0m10.286s
-user	0m0.116s
-sys	0m10.169s
-
-n=17
-real	0m41.431s
-user	0m0.452s
-sys	0m40.975s
-
-
-n=18
-real	1m22.350s
-user	0m0.820s
-sys	1m21.521s
-
-
-2.2
-hanoi 25, sans les forcer sur un processeur
-real	0m14.416s
-user	0m11.733s
-sys	0m1.508s
-
-real	0m14.724s
-user	0m11.989s
-sys	0m1.532s
-
-hanoi 25, en les forçant sur un même processeur (virsh vcpupin wheezy0 0 0)
-real	0m24.501s
-user	0m22.573s
-sys	0m1.360s
-
-real	0m24.316s
-user	0m22.009s
-sys	0m1.580s
-
-
-3.1
-deux machines virtuelles sur le meme serveur :
-64 bytes from 10.158.3.253: icmp_req=1 ttl=63 time=0.378 ms
-64 bytes from 10.158.3.253: icmp_req=2 ttl=63 time=0.280 ms
-64 bytes from 10.158.3.253: icmp_req=3 ttl=63 time=0.300 ms
-64 bytes from 10.158.3.253: icmp_req=4 ttl=63 time=0.246 ms
-64 bytes from 10.158.3.253: icmp_req=5 ttl=63 time=0.288 ms
-64 bytes from 10.158.3.253: icmp_req=6 ttl=63 time=0.280 ms
-64 bytes from 10.158.3.253: icmp_req=7 ttl=63 time=0.235 ms
---- 10.158.3.253 ping statistics ---
-7 packets transmitted, 7 received, 0% packet loss, time 5997ms
-rtt min/avg/max/mdev = 0.235/0.286/0.378/0.047 ms
-
-deux machines virtuelles sur des serveurs différents
-PING 10.158.3.253 (10.158.3.253) 56(84) bytes of data.
-64 bytes from 10.158.3.253: icmp_req=1 ttl=64 time=0.819 ms
-64 bytes from 10.158.3.253: icmp_req=2 ttl=64 time=0.386 ms
-64 bytes from 10.158.3.253: icmp_req=3 ttl=64 time=0.430 ms
-64 bytes from 10.158.3.253: icmp_req=4 ttl=64 time=0.407 ms
-64 bytes from 10.158.3.253: icmp_req=5 ttl=64 time=0.384 ms
-64 bytes from 10.158.3.253: icmp_req=6 ttl=64 time=0.354 ms
-64 bytes from 10.158.3.253: icmp_req=7 ttl=64 time=0.374 ms
-64 bytes from 10.158.3.253: icmp_req=8 ttl=64 time=0.405 ms
-^C
---- 10.158.3.253 ping statistics ---
-8 packets transmitted, 8 received, 0% packet loss, time 7011ms
-rtt min/avg/max/mdev = 0.354/0.444/0.819/0.145 ms
-
-entre les deux parapluies
-PING parapluie-21.rennes.grid5000.fr (172.16.99.21) 56(84) bytes of data.
-64 bytes from parapluie-21.rennes.grid5000.fr (172.16.99.21): icmp_req=1 ttl=64 time=0.190 ms
-64 bytes from parapluie-21.rennes.grid5000.fr (172.16.99.21): icmp_req=2 ttl=64 time=0.088 ms
-64 bytes from parapluie-21.rennes.grid5000.fr (172.16.99.21): icmp_req=3 ttl=64 time=0.093 ms
-64 bytes from parapluie-21.rennes.grid5000.fr (172.16.99.21): icmp_req=4 ttl=64 time=0.094 ms
-64 bytes from parapluie-21.rennes.grid5000.fr (172.16.99.21): icmp_req=5 ttl=64 time=0.090 ms
-64 bytes from parapluie-21.rennes.grid5000.fr (172.16.99.21): icmp_req=6 ttl=64 time=0.093 ms
-64 bytes from parapluie-21.rennes.grid5000.fr (172.16.99.21): icmp_req=7 ttl=64 time=0.090 ms
-64 bytes from parapluie-21.rennes.grid5000.fr (172.16.99.21): icmp_req=8 ttl=64 time=0.090 ms
-^C
---- parapluie-21.rennes.grid5000.fr ping statistics ---
-8 packets transmitted, 8 received, 0% packet loss, time 6998ms
-rtt min/avg/max/mdev = 0.088/0.103/0.190/0.034 ms
-
-
-depuis l'os hote(parapluie) a une VM du meme serveur
-PING 10.158.3.253 (10.158.3.253) 56(84) bytes of data.
-64 bytes from 10.158.3.253: icmp_req=1 ttl=63 time=0.419 ms
-64 bytes from 10.158.3.253: icmp_req=2 ttl=63 time=0.304 ms
-64 bytes from 10.158.3.253: icmp_req=3 ttl=63 time=0.289 ms
-64 bytes from 10.158.3.253: icmp_req=4 ttl=63 time=0.247 ms
-64 bytes from 10.158.3.253: icmp_req=5 ttl=63 time=0.296 ms
-64 bytes from 10.158.3.253: icmp_req=6 ttl=63 time=0.284 ms
-64 bytes from 10.158.3.253: icmp_req=7 ttl=63 time=0.240 ms
-64 bytes from 10.158.3.253: icmp_req=8 ttl=63 time=0.289 ms
-^C
---- 10.158.3.253 ping statistics ---
-8 packets transmitted, 8 received, 0% packet loss, time 6999ms
-rtt min/avg/max/mdev = 0.240/0.296/0.419/0.051 ms
-
-
-3.2
-iperf entre deux vms sur le meme serveur
-iperf -s
-iperf -c (adresse du serveur)
-root@virtual-158-3-253:~# iperf -c 10.158.3.254
-------------------------------------------------------------
-Client connecting to 10.158.3.254, TCP port 5001
-TCP window size: 23.5 KByte (default)
-------------------------------------------------------------
-[  3] local 10.158.3.253 port 58930 connected with 10.158.3.254 port 5001
-[ ID] Interval       Transfer     Bandwidth
-[  3]  0.0-10.0 sec  2.76 GBytes  2.37 Gbits/sec
-
-iperf entre deux vms sur des serveurs différents
-root@virtual-158-3-253:~# iperf -c 10.158.3.252
-------------------------------------------------------------
-Client connecting to 10.158.3.252, TCP port 5001
-TCP window size: 23.5 KByte (default)
-------------------------------------------------------------
-[  3] local 10.158.3.253 port 47499 connected with 10.158.3.252 port 5001
-[ ID] Interval       Transfer     Bandwidth
-[  3]  0.0-10.0 sec  1.10 GBytes   941 Mbits/sec
-
-
-
-4.1
-time virsh migrate wheezy1 qemu+ssh://parapluie-32/system
-
-
-real	0m5.840s
-user	0m0.040s
-sys	0m0.008s
-
-
-4.2
-time $(virsh migrate wheezy1 qemu+ssh://parapluie-32/system & virsh migrate wheezy3 qemu+ssh://parapluie-32/system)
-
-real	0m7.850s
-user	0m0.060s
-sys	0m0.040s
-
-$
-envoi des deux vm depuis des serveurs sources différents
-time $(virsh migrate wheezy3 qemu+ssh://parapluie-21/system)
-
-real	0m2.820s
-user	0m0.036s
-sys	0m0.016s
-
-
-time $(virsh migrate wheezy1 qemu+ssh://parapluie-32/system)
-
-real	0m6.061s
-user	0m0.048s
-sys	0m0.008s
-
-
-4.4
